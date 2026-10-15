@@ -108,7 +108,7 @@ async function main() {
     sourcesContent: false,
     platform: "node",
     outfile: "dist/extension.js",
-    // The host no longer touches magickwand — the engine lives in the webview.
+    // The host loads no native addon; the wasm engine is copied to dist/ separately.
     external: ["vscode"],
     logLevel: "silent",
     plugins: [esbuildProblemMatcherPlugin],

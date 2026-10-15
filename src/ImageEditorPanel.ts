@@ -33,7 +33,7 @@ const FORMAT_FILTER_LABELS: Record<ImageFormat, string> = {
  * way to move image data.
  */
 export class ImageEditorPanel {
-  private static readonly viewType = "imagemagickEditor";
+  private static readonly viewType = "pixkitEditor";
   private static panels: ImageEditorPanel[] = [];
 
   private readonly panel: vscode.WebviewPanel;
@@ -64,10 +64,10 @@ export class ImageEditorPanel {
 
     const title =
       uris.length > 1
-        ? `ImageMagick (${uris.length} files)`
+        ? `Pixkit (${uris.length} files)`
         : uris[0]
           ? path.basename(uris[0].fsPath)
-          : "ImageMagick";
+          : "Pixkit";
 
     const panel = vscode.window.createWebviewPanel(
       ImageEditorPanel.viewType,
@@ -231,7 +231,7 @@ export class ImageEditorPanel {
     if (!name) {
       return;
     }
-    const config = vscode.workspace.getConfiguration("imagemagick");
+    const config = vscode.workspace.getConfiguration("pixkit");
     const existing = config.get<unknown[]>("presets") ?? [];
     const next = [
       ...existing,
@@ -403,7 +403,7 @@ export class ImageEditorPanel {
       );
     } else {
       vscode.window.showWarningMessage(
-        `Saved ${saved}, ${failed} failed. See ImageMagick output for details.`,
+        `Saved ${saved}, ${failed} failed. See Pixkit output for details.`,
       );
     }
   }
@@ -462,12 +462,12 @@ export class ImageEditorPanel {
         data: { message },
       } satisfies HostToWebviewMessage);
     }
-    vscode.window.showErrorMessage(`ImageMagick: ${message}`);
+    vscode.window.showErrorMessage(`Pixkit: ${message}`);
   }
 
   /**
    * Logs the full exception (message + stack + chained cause) to the
-   * "ImageMagick" Output channel so users can copy a complete diagnostic when
+   * "Pixkit" Output channel so users can copy a complete diagnostic when
    * reporting bugs.
    */
   private logException(err: unknown, context: string): void {
@@ -529,7 +529,7 @@ export class ImageEditorPanel {
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'wasm-unsafe-eval'; font-src ${webview.cspSource}; img-src ${webview.cspSource} data:; connect-src ${webview.cspSource};">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="${styleUri}" rel="stylesheet">
-  <title>ImageMagick</title>
+  <title>Pixkit</title>
 </head>
 <body>
   <div id="root"></div>

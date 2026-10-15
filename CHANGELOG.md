@@ -4,6 +4,14 @@ All notable changes to the "vs-code-extension-svelte-starter" extension will be 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+
+- Renamed the extension from ImageMagick to Pixkit, since "ImageMagick" is a
+  trademark of ImageMagick Studio LLC. The engine is unchanged.
+- Command IDs moved from `imagemagick.*` to `pixkit.*`, and the presets setting
+  from `imagemagick.presets` to `pixkit.presets`. Copy your presets across in
+  `settings.json` to keep them.
+
 ## [0.5.0]
 
 No new features. This release cuts about 170 lines of internal code with no

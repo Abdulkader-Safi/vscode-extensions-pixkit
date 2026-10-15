@@ -127,7 +127,7 @@
 
     onMount(() => {
         dispose = onHostMessage((msg) => {
-            console.log("[ImageMagick] webview received:", msg.type);
+            console.log("[Pixkit] webview received:", msg.type);
             switch (msg.type) {
                 case "bulkInfo":
                     bulkFiles = msg.data.files;
@@ -173,14 +173,14 @@
                     break;
                 default:
                     console.warn(
-                        "[ImageMagick] unhandled message type (host/webview version mismatch?):",
+                        "[Pixkit] unhandled message type (host/webview version mismatch?):",
                         (msg as { type?: string }).type,
                     );
             }
         });
         // Warm the engine and learn which formats it can actually encode.
         void initFormats();
-        console.log("[ImageMagick] webview mounted, sending ready");
+        console.log("[Pixkit] webview mounted, sending ready");
         send({ type: "ready" });
     });
 
@@ -209,7 +209,7 @@
         bytes: Uint8Array,
     ): Promise<void> {
         console.log(
-            "[ImageMagick] inbound complete:",
+            "[Pixkit] inbound complete:",
             meta.kind,
             bytes.length,
             "bytes",
@@ -259,7 +259,7 @@
         try {
             const info = await service.loadFromBytes(bytes, path, name);
             console.log(
-                "[ImageMagick] source loaded:",
+                "[Pixkit] source loaded:",
                 info.name,
                 `${info.width}x${info.height}`,
                 info.format,
@@ -426,7 +426,7 @@
             <div
                 class="px-4 py-2 text-xs font-semibold tracking-wide uppercase bg-vscode-section-bg text-vscode-section-fg"
             >
-                ImageMagick
+                Pixkit
             </div>
 
             {#if source}
@@ -468,7 +468,7 @@
                     Drop an image into the preview area, or run
                     <code
                         class="px-1 py-0.5 rounded font-mono text-xs bg-vscode-code-bg"
-                        >ImageMagick: Open Image</code
+                        >Pixkit: Open Image</code
                     >
                     from the command palette.
                 </div>

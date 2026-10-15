@@ -13,7 +13,7 @@ let outputChannel: vscode.OutputChannel | undefined;
 
 export function getOutputChannel(): vscode.OutputChannel {
   if (!outputChannel) {
-    outputChannel = vscode.window.createOutputChannel("ImageMagick");
+    outputChannel = vscode.window.createOutputChannel("Pixkit");
   }
   return outputChannel;
 }
@@ -59,10 +59,10 @@ function describePreset(p: OptimizePreset): string {
 export function activate(context: vscode.ExtensionContext): void {
   const channel = getOutputChannel();
   context.subscriptions.push(channel);
-  channel.appendLine("ImageMagick activated");
+  channel.appendLine("Pixkit activated");
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("imagemagick.openImage", async () => {
+    vscode.commands.registerCommand("pixkit.openImage", async () => {
       const picks = await vscode.window.showOpenDialog({
         canSelectMany: true,
         openLabel: "Open",
@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext): void {
       ImageEditorPanel.createOrShow(context.extensionUri, uris);
     }),
     vscode.commands.registerCommand(
-      "imagemagick.openImageFromExplorer",
+      "pixkit.openImageFromExplorer",
       (uri: vscode.Uri | undefined, uris: vscode.Uri[] | undefined) => {
         // VS Code passes the full multi-select in the second argument when the
         // user right-clicks with multiple items selected. Fall back to the
@@ -86,13 +86,13 @@ export function activate(context: vscode.ExtensionContext): void {
       },
     ),
     vscode.commands.registerCommand(
-      "imagemagick.optimizeWithPreset",
+      "pixkit.optimizeWithPreset",
       async (uri: vscode.Uri | undefined, uris: vscode.Uri[] | undefined) => {
         const selected = uris && uris.length > 0 ? uris : uri ? [uri] : [];
         const images = filterImageUris(selected);
         if (images.length === 0) {
           vscode.window.showWarningMessage(
-            "ImageMagick: no image files selected.",
+            "Pixkit: no image files selected.",
           );
           return;
         }
@@ -162,18 +162,18 @@ export function activate(context: vscode.ExtensionContext): void {
               );
             } else {
               vscode.window.showWarningMessage(
-                `Optimized ${saved}, ${failed} failed. See the ImageMagick output for details.`,
+                `Optimized ${saved}, ${failed} failed. See the Pixkit output for details.`,
               );
             }
           },
         );
       },
     ),
-    vscode.commands.registerCommand("imagemagick.deletePreset", async () => {
+    vscode.commands.registerCommand("pixkit.deletePreset", async () => {
       const saved = loadSavedPresets();
       if (saved.length === 0) {
         vscode.window.showInformationMessage(
-          "ImageMagick: you have no saved presets. The three built-in presets cannot be deleted; they are only offered while your preset list is empty.",
+          "Pixkit: you have no saved presets. The three built-in presets cannot be deleted; they are only offered while your preset list is empty.",
         );
         return;
       }
@@ -206,7 +206,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const dropped = new Set(picks.map((p) => p.index));
       const next = saved.filter((_, i) => !dropped.has(i));
       await vscode.workspace
-        .getConfiguration("imagemagick")
+        .getConfiguration("pixkit")
         .update("presets", next, vscode.ConfigurationTarget.Global);
 
       vscode.window.showInformationMessage(

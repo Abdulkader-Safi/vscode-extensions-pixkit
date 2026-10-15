@@ -43,7 +43,7 @@
         <span class="ml-auto whitespace-nowrap opacity-70">
             developed by
             <a
-                href="https://abdulkadersafi.com/?utm_source=vscode&utm_medium=extension&utm_campaign=imagemagick&utm_content=action-bar"
+                href="https://abdulkadersafi.com/?utm_source=vscode&utm_medium=extension&utm_campaign=pixkit&utm_content=action-bar"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="underline hover:text-vscode-fg"

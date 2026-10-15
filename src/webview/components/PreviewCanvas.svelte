@@ -418,7 +418,7 @@
             return;
         }
         console.warn(
-            "[ImageMagick] drop had no file or file URI; types:",
+            "[Pixkit] drop had no file or file URI; types:",
             dt ? Array.from(dt.types) : "none",
         );
     }
