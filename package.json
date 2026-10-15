@@ -1,8 +1,8 @@
 {
-  "name": "imagemagick",
-  "displayName": "ImageMagick",
+  "name": "pixkit",
+  "displayName": "Pixkit",
   "description": "Resize, crop, rotate, compress and convert images directly inside VS Code, powered by ImageMagick.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "abdulkadersafi",
   "license": "MIT",
   "engines": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Abdulkader-Safi/vscode-extensions-ImageMagick.git"
+    "url": "https://github.com/Abdulkader-Safi/vscode-extensions-pixkit.git"
   },
   "categories": [
     "Visualization",
@@ -23,8 +23,6 @@
   ],
   "keywords": [
     "image",
-    "imagemagick",
-    "magickwand",
     "optimize",
     "compress",
     "resize",
@@ -42,54 +40,54 @@
   "contributes": {
     "commands": [
       {
-        "command": "imagemagick.openImage",
-        "title": "ImageMagick: Open Image",
-        "category": "ImageMagick"
+        "command": "pixkit.openImage",
+        "title": "Pixkit: Open Image",
+        "category": "Pixkit"
       },
       {
-        "command": "imagemagick.openImageFromExplorer",
-        "title": "Optimize Image with ImageMagick",
-        "category": "ImageMagick"
+        "command": "pixkit.openImageFromExplorer",
+        "title": "Optimize Image with Pixkit",
+        "category": "Pixkit"
       },
       {
-        "command": "imagemagick.optimizeWithPreset",
-        "title": "Optimize with Preset (ImageMagick)",
-        "category": "ImageMagick"
+        "command": "pixkit.optimizeWithPreset",
+        "title": "Optimize with Preset (Pixkit)",
+        "category": "Pixkit"
       },
       {
-        "command": "imagemagick.deletePreset",
+        "command": "pixkit.deletePreset",
         "title": "Delete Preset",
-        "category": "ImageMagick"
+        "category": "Pixkit"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "imagemagick.openImageFromExplorer",
+          "command": "pixkit.openImageFromExplorer",
           "when": "false"
         },
         {
-          "command": "imagemagick.optimizeWithPreset",
+          "command": "pixkit.optimizeWithPreset",
           "when": "false"
         }
       ],
       "explorer/context": [
         {
-          "command": "imagemagick.openImageFromExplorer",
+          "command": "pixkit.openImageFromExplorer",
           "when": "resourceExtname =~ /\\.(png|jpg|jpeg|webp|gif|bmp|tiff|tif|avif|heic|heif)$/i",
           "group": "navigation@50"
         },
         {
-          "command": "imagemagick.optimizeWithPreset",
+          "command": "pixkit.optimizeWithPreset",
           "when": "resourceExtname =~ /\\.(png|jpg|jpeg|webp|gif|bmp|tiff|tif|avif|heic|heif)$/i",
           "group": "navigation@51"
         }
       ]
     },
     "configuration": {
-      "title": "ImageMagick",
+      "title": "Pixkit",
       "properties": {
-        "imagemagick.presets": {
+        "pixkit.presets": {
           "type": "array",
           "default": [],
           "markdownDescription": "Optimization presets shown in the \"Optimize with Preset\" right-click menu. When empty, three built-in presets are used (Web WebP, Compress JPEG, PNG to WebP).",

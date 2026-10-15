@@ -43,7 +43,7 @@ export interface OptimizePreset {
 
 `src/presets.ts` also exports:
 - `DEFAULT_PRESETS: OptimizePreset[]` (the three below).
-- `loadPresets(): OptimizePreset[]` — reads `imagemagick.presets` from config,
+- `loadPresets(): OptimizePreset[]` — reads `pixkit.presets` from config,
   validates each entry, and falls back to `DEFAULT_PRESETS` when the setting is
   empty or missing. Invalid entries are dropped (logged), not fatal.
 
@@ -54,7 +54,7 @@ Default presets:
 
 ### 2. Settings contribution — `package.json`
 
-Add `contributes.configuration` with `imagemagick.presets`: an array of preset
+Add `contributes.configuration` with `pixkit.presets`: an array of preset
 objects, described so users can edit it in Settings JSON. Default `[]` (empty),
 which triggers the built-in defaults at load time.
 
@@ -77,7 +77,7 @@ Runs magick-wasm in the extension host.
 The pipeline logic overlaps the webview engine's resize/quality handling. Kept
 separate for now; extract a shared module only if a third caller appears.
 
-### 4. Command — `imagemagick.optimizeWithPreset` (`src/extension.ts`)
+### 4. Command — `pixkit.optimizeWithPreset` (`src/extension.ts`)
 
 - Contributed to `explorer/context` for the same image extensions as
   `openImageFromExplorer`, multi-select aware (VS Code passes the clicked uri
@@ -91,7 +91,7 @@ separate for now; extract a shared module only if a third caller appears.
      - `output === "suffix"`: `<dir>/<stem><suffix>.<ext>` where ext comes from
        `preset.format`.
      - `output === "overwrite"`: write back to the source path.
-  4. End summary: `Saved N` or `Saved N, M failed. See ImageMagick output.`
+  4. End summary: `Saved N` or `Saved N, M failed. See Pixkit output.`
      Per-file failures are logged to the existing output channel and counted,
      never abort the batch.
 
@@ -102,7 +102,7 @@ separate for now; extract a shared module only if a third caller appears.
   where `maxLongEdge = resize ? max(resize.width, resize.height) : null`.
 - Host handles it in `ImageEditorPanel`: `showInputBox` for a name (default
   suggestion from format), build an `OptimizePreset` (strip off, output suffix,
-  suffix `.optimized`), append to `imagemagick.presets`, write back with
+  suffix `.optimized`), append to `pixkit.presets`, write back with
   `ConfigurationTarget.Global`. Confirm with an information message.
 - Strip defaults off here because the panel has no strip toggle yet; that toggle
   is a separate roadmap item.

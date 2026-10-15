@@ -4,7 +4,7 @@
 
 **Goal:** Right-click an image (or a multi-selection) in the Explorer, pick a saved preset, and have optimized output written to disk headlessly — no panel, no dialogs.
 
-**Architecture:** Presets are plain objects stored in the `imagemagick.presets` setting (with built-in defaults). A new host-side encoder runs `@imagemagick/magick-wasm` in the extension host (Node) — the same wasm the webview uses, already copied to `dist/magick.wasm` — so the one-click path needs no webview. A single command shows a quick-pick of presets and encodes each selected file. The editor panel gains a "Save as preset" button that writes the current settings back to config.
+**Architecture:** Presets are plain objects stored in the `pixkit.presets` setting (with built-in defaults). A new host-side encoder runs `@imagemagick/magick-wasm` in the extension host (Node) — the same wasm the webview uses, already copied to `dist/magick.wasm` — so the one-click path needs no webview. A single command shows a quick-pick of presets and encodes each selected file. The editor panel gains a "Save as preset" button that writes the current settings back to config.
 
 **Tech Stack:** TypeScript, VS Code Extension API, `@imagemagick/magick-wasm` (already a dependency), Svelte 5 (webview), esbuild.
 
@@ -31,7 +31,7 @@
   - `interface OptimizePreset { name: string; format: ImageFormat; quality: number; maxLongEdge: number | null; stripMetadata: boolean; output: "suffix" | "overwrite"; suffix: string; }`
   - `const DEFAULT_PRESETS: OptimizePreset[]`
   - `function resolvePresets(raw: unknown): OptimizePreset[]` — pure; validates a raw array, drops invalid entries, returns `DEFAULT_PRESETS` when the result is empty.
-  - `function loadPresets(): OptimizePreset[]` — reads `imagemagick.presets` from config and passes it through `resolvePresets`.
+  - `function loadPresets(): OptimizePreset[]` — reads `pixkit.presets` from config and passes it through `resolvePresets`.
 - Consumes: `ImageFormat` from `src/messages.ts`.
 
 - [ ] **Step 1: Write the failing tests**
@@ -154,9 +154,9 @@ export function resolvePresets(raw: unknown): OptimizePreset[] {
   return out.length > 0 ? out : DEFAULT_PRESETS;
 }
 
-/** Reads the `imagemagick.presets` setting and resolves it. */
+/** Reads the `pixkit.presets` setting and resolves it. */
 export function loadPresets(): OptimizePreset[] {
-  const raw = vscode.workspace.getConfiguration("imagemagick").get("presets");
+  const raw = vscode.workspace.getConfiguration("pixkit").get("presets");
   return resolvePresets(raw);
 }
 ```
@@ -167,9 +167,9 @@ Inside `contributes` (a sibling of `commands` and `menus`), add:
 
 ```json
 "configuration": {
-  "title": "ImageMagick",
+  "title": "Pixkit",
   "properties": {
-    "imagemagick.presets": {
+    "pixkit.presets": {
       "type": "array",
       "default": [],
       "markdownDescription": "Optimization presets shown in the \"Optimize with Preset\" right-click menu. When empty, three built-in presets are used (Web WebP, Compress JPEG, PNG to WebP).",
@@ -380,7 +380,7 @@ git commit -m "Add host-side preset encoder"
 ### Task 3: One-click command and menu
 
 **Files:**
-- Modify: `src/extension.ts` (register `imagemagick.optimizeWithPreset`)
+- Modify: `src/extension.ts` (register `pixkit.optimizeWithPreset`)
 - Modify: `package.json` (`contributes.commands` + `contributes.menus.explorer/context`)
 
 **Interfaces:**
@@ -392,23 +392,23 @@ In `contributes.commands`, add:
 
 ```json
 {
-  "command": "imagemagick.optimizeWithPreset",
-  "title": "Optimize with Preset (ImageMagick)",
-  "category": "ImageMagick"
+  "command": "pixkit.optimizeWithPreset",
+  "title": "Optimize with Preset (Pixkit)",
+  "category": "Pixkit"
 }
 ```
 
 In `contributes.menus.commandPalette`, hide it (it needs a file argument):
 
 ```json
-{ "command": "imagemagick.optimizeWithPreset", "when": "false" }
+{ "command": "pixkit.optimizeWithPreset", "when": "false" }
 ```
 
 In `contributes.menus.explorer/context`, add next to the existing entry:
 
 ```json
 {
-  "command": "imagemagick.optimizeWithPreset",
+  "command": "pixkit.optimizeWithPreset",
   "when": "resourceExtname =~ /\\.(png|jpg|jpeg|webp|gif|bmp|tiff|tif|avif|heic|heif)$/i",
   "group": "navigation@51"
 }
@@ -427,12 +427,12 @@ Add this command registration inside the `context.subscriptions.push(...)` list 
 
 ```ts
 vscode.commands.registerCommand(
-  "imagemagick.optimizeWithPreset",
+  "pixkit.optimizeWithPreset",
   async (uri: vscode.Uri | undefined, uris: vscode.Uri[] | undefined) => {
     const selected = uris && uris.length > 0 ? uris : uri ? [uri] : [];
     const images = filterImageUris(selected);
     if (images.length === 0) {
-      vscode.window.showWarningMessage("ImageMagick: no image files selected.");
+      vscode.window.showWarningMessage("Pixkit: no image files selected.");
       return;
     }
 
@@ -482,7 +482,7 @@ vscode.commands.registerCommand(
           vscode.window.showInformationMessage(`Optimized ${saved} image${saved === 1 ? "" : "s"}.`);
         } else {
           vscode.window.showWarningMessage(
-            `Optimized ${saved}, ${failed} failed. See the ImageMagick output for details.`,
+            `Optimized ${saved}, ${failed} failed. See the Pixkit output for details.`,
           );
         }
       },
@@ -501,7 +501,7 @@ Expected: no errors; `[build] copied magick.wasm into dist/`.
 - [ ] **Step 4: Manual verification (host integration — no unit test)**
 
 1. Press F5 to launch the Extension Development Host.
-2. In the Explorer, right-click a `.png` or `.jpg` → **Optimize with Preset (ImageMagick)**.
+2. In the Explorer, right-click a `.png` or `.jpg` → **Optimize with Preset (Pixkit)**.
 3. Pick **Web WebP**.
 4. Confirm a `<name>.optimized.webp` appears next to the source and a "Optimized 1 image." notification shows.
 5. Select two images, right-click, run it again, confirm both are written and the count is correct.
@@ -527,7 +527,7 @@ git commit -m "Add one-click Optimize with Preset command"
 
 **Interfaces:**
 - Consumes: `WebviewToHostMessage` union in `src/messages.ts`.
-- Produces: a `savePreset` message the host turns into a new `imagemagick.presets` entry.
+- Produces: a `savePreset` message the host turns into a new `pixkit.presets` entry.
 
 - [ ] **Step 1: Add the message type to `src/messages.ts`**
 
@@ -604,7 +604,7 @@ Add the method (near `handleSelectBulkFile`):
     if (!name) {
       return;
     }
-    const config = vscode.workspace.getConfiguration("imagemagick");
+    const config = vscode.workspace.getConfiguration("pixkit");
     const existing = config.get<unknown[]>("presets") ?? [];
     const next = [
       ...existing,
@@ -635,7 +635,7 @@ Expected: no errors.
 1. F5 to launch the Extension Development Host.
 2. Open an image, set format to WebP and quality to 70, set a resize width.
 3. Click **Save as preset**, name it "My Web", confirm the info message.
-4. Open Settings JSON, confirm `imagemagick.presets` has a "My Web" entry with `format: "webp"`, `quality: 70`, and the expected `maxLongEdge`.
+4. Open Settings JSON, confirm `pixkit.presets` has a "My Web" entry with `format: "webp"`, `quality: 70`, and the expected `maxLongEdge`.
 5. Right-click an image → **Optimize with Preset** → confirm "My Web" appears in the quick-pick.
 
 - [ ] **Step 7: Commit**
@@ -661,7 +661,7 @@ Under `## Features`, add a bullet and a short usage note:
 - **Presets & one-click optimize** — right-click an image (or a selection) →
   **Optimize with Preset** to write optimized output straight to disk, no panel.
   Presets hold a format, quality, max size, and metadata-strip choice; edit them
-  in the `imagemagick.presets` setting, or use **Save as preset** in the panel.
+  in the `pixkit.presets` setting, or use **Save as preset** in the panel.
 ```
 
 - [ ] **Step 2: Add a changelog entry to `CHANGELOG.md`**
@@ -676,7 +676,7 @@ Add above the `[0.3.0]` entry (pick the next version number when releasing):
   dialogs. Presets cover format, quality, max long edge, metadata stripping, and
   whether to write alongside with a suffix or overwrite in place. Three presets
   ship by default (Web WebP, Compress JPEG, PNG to WebP); add your own in the
-  `imagemagick.presets` setting or with the new "Save as preset" button in the
+  `pixkit.presets` setting or with the new "Save as preset" button in the
   editor panel. The one-click path encodes in the extension host with the same
   WebAssembly engine, so nothing is uploaded and no editor tab opens.
 ```

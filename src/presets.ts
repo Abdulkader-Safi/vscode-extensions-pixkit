@@ -125,5 +125,5 @@ export function loadSavedPresets(): OptimizePreset[] {
 }
 
 function readPresetSetting(): unknown {
-  return vscode.workspace.getConfiguration("imagemagick").get("presets");
+  return vscode.workspace.getConfiguration("pixkit").get("presets");
 }

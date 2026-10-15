@@ -53,10 +53,10 @@ function ensureInitialized(): Promise<void> {
       const wasmUri = window.__MAGICK_WASM__;
       if (!wasmUri) {
         throw new Error(
-          "ImageMagick wasm location was not provided to the webview (window.__MAGICK_WASM__ missing).",
+          "Image engine wasm location was not provided to the webview (window.__MAGICK_WASM__ missing).",
         );
       }
-      console.log("[ImageMagick] fetching wasm:", wasmUri);
+      console.log("[Pixkit] fetching wasm:", wasmUri);
       const response = await fetch(wasmUri);
       if (!response.ok) {
         throw new Error(
@@ -64,9 +64,9 @@ function ensureInitialized(): Promise<void> {
         );
       }
       const wasmBytes = new Uint8Array(await response.arrayBuffer());
-      console.log("[ImageMagick] wasm fetched, bytes:", wasmBytes.length);
+      console.log("[Pixkit] wasm fetched, bytes:", wasmBytes.length);
       await initializeImageMagick(wasmBytes);
-      console.log("[ImageMagick] engine initialized");
+      console.log("[Pixkit] engine initialized");
     })();
   }
   return initPromise;

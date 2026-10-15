@@ -107,21 +107,21 @@ suite("hostEncoder", () => {
   });
 });
 
-suite("ImageMagick", () => {
+suite("Pixkit", () => {
   test("registers commands", async () => {
     // The extension is lazily activated, so trigger activation before checking
     // the command registry.
     await vscode.extensions
-      .getExtension("abdulkadersafi.imagemagick")
+      .getExtension("abdulkadersafi.pixkit")
       ?.activate();
     const commands = await vscode.commands.getCommands(true);
     assert.ok(
-      commands.includes("imagemagick.openImage"),
-      "imagemagick.openImage should be registered",
+      commands.includes("pixkit.openImage"),
+      "pixkit.openImage should be registered",
     );
     assert.ok(
-      commands.includes("imagemagick.openImageFromExplorer"),
-      "imagemagick.openImageFromExplorer should be registered",
+      commands.includes("pixkit.openImageFromExplorer"),
+      "pixkit.openImageFromExplorer should be registered",
     );
   });
 });
